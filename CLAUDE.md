@@ -11,24 +11,37 @@ Keep publishing to that same URL. Review progress is stored in that artifact's p
 |---|---|
 | `index.html` | The whole app: one page, inline CSS and JS. Loads d3 7.9.0 from cdnjs. |
 | `world.json` | Country outlines, published alongside the page and fetched as `world.json`. Compact array: `[ADM0_A3, NAME, SUBREGION, REGION_UN, TYPE, MultiPolygon coords]`. |
+| `disputed.json` | Striped disputed areas, published alongside the page. Array: `[name, note, MultiPolygon coords]`. |
 | `tools/prep_world.py` | Builds `world.json` from Natural Earth `ne_50m_admin_0_countries.geojson` (github.com/nvkelso/natural-earth-vector). Run: `python3 tools/prep_world.py <geojson> world.json` |
+| `tools/un_borders.py` | Run once after `prep_world.py`: redraws disputed land the UN's way and splits out territories drawn inside their country. Needs shapely and Natural Earth's `ne_50m_admin_0_breakaway_disputed_areas.geojson`. Run: `python3 tools/un_borders.py world.json <disputed geojson> world.json` |
+| `tools/disputed.py` | Builds `disputed.json` from the same disputed-areas file. Run: `python3 tools/disputed.py <disputed geojson> world.json disputed.json` |
 
 ### world.json build rules
 
 - Uniform 3-decimal rounding and no line simplification. Simplifying each country separately makes neighboring borders stop matching, and then the thick coastline stroke shows through as slivers along inland borders.
-- Exterior rings are clockwise and holes counterclockwise, as d3 expects. Holes are kept, so Italy has holes for San Marino and Vatican City, and South Africa has one for Lesotho.
+- Exterior rings are clockwise and holes counterclockwise, as d3 expects (in `disputed.json` too). Holes are kept, so Italy has holes for San Marino and Vatican City, and South Africa has one for Lesotho.
 
 ## Countries
 
-- 200 quizzable: 193 UN members plus Vatican City, Palestine, Taiwan, Kosovo, Western Sahara, Cook Islands, and Niue. Display names are in `NAMES`.
+- 245 quizzable:
+  - 200 countries: 193 UN members plus Vatican City, Palestine, Taiwan, Kosovo, Western Sahara, Cook Islands, and Niue. Display names are in `NAMES`.
+  - 45 territories in `DEPS`: every place with an ISO country code of its own (Greenland, Puerto Rico, French Guiana, Hong Kong...), shown as "Greenland (Denmark)". Places with no code of their own (Alaska, Hawaii, the Canaries, the Azores, Madeira) stay part of their country.
 - `MINE` holds the 63 "small nations" codes, which is Stellyn's original list.
-- `NON_UN` is the 7 non-UN entries.
+- `NON_UN` is the 7 non-UN countries plus the 45 territories, all left out by "UN members only".
 - `ALIAS` maps map pieces to the quiz country they count as: N. Cyprus → Cyprus, Somaliland → Somalia, Åland → Finland.
 - Region and subregion overrides:
   - Cyprus is in Europe / Southern Europe.
   - Mexico is in North America.
   - "Northern America" is renamed "North America".
-- Dependencies (Greenland, Puerto Rico, Guam, and so on) appear on the map and are clickable, but are never quizzed.
+- The Southern Ocean is a sixth region chip, for the French Southern Lands and Heard and McDonald Islands. South Georgia counts as South America, Christmas and Cocos as South-eastern Asia, Chagos as Eastern Africa.
+
+## Borders and disputed land
+
+- Borders follow the UN (Stellyn's call), via `tools/un_borders.py`: Crimea is Ukraine, the Golan Heights Syria, and Western Sahara is whole and separate from Morocco. The Chagos Islands are named as Mauritius's (UN General Assembly, 2019).
+- Western Sahara keeps its plain name. Somaliland stays part of Somalia.
+- Disputed land is striped, with a dashed edge and a "Disputed" key. The rule: stripe land where the map, drawn the UN's way, and whoever actually runs it disagree; or a region split by a ceasefire line where the UN takes no view on which side is whose.
+  - Striped: Crimea, Donetsk, Luhansk (Natural Earth's 2014 lines), Golan Heights, Northern Cyprus, Somaliland, Abkhazia, South Ossetia, Transnistria, Abyei, the Kashmir areas, Aksai Chin, Arunachal Pradesh and small India–China valleys, all of Western Sahara.
+  - Not striped: Kosovo, Taiwan, the Koreas, Palestine (Israel runs much of the West Bank, but the data can't show which parts), the Kuril Islands, Nagorno-Karabakh, the Falklands, and other disputes where the map and who runs it agree.
 
 ## Scheduling (Anki-like)
 
@@ -38,6 +51,7 @@ Keep publishing to that same URL. Review progress is stored in that artifact's p
 - The day starts at 4am.
 - The new-card limit per day is shared across all filters.
 - Tries per card (default 2): a wrong click shows "Try again" and shades the wrong pick. A right answer on a later try defaults to Hard. Running out of tries, or pressing "I don't know", counts as Again.
+- Territory of the right country: clicking a territory of the country asked for (French Guiana when it's France) isn't a miss. It says "That's French Guiana, which belongs to France. Try the mainland." and gives another go. The territory's name is exposed as usual.
 - Neighbor nudge: a country clicked by mistake has its review pulled to within a day. This applies to regular reviews only.
 
 ### Exposure rule
