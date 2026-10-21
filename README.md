@@ -2,7 +2,7 @@
 
 A click-the-country world map quiz with Anki-style spaced repetition. A country's name appears; click it on the map. Countries you know come back less often, and ones you miss come back sooner.
 
-Play it at https://claude.ai/artifact/Po6m9MbbpMrpjwaSNNpKoQ, where your review progress is saved to your Claude account, or at https://rhymes-with-tree.github.io/mapstudy/, where it's saved in your browser.
+Play it at https://rhymes-with-tree.github.io/mapstudy/, where it's saved in your browser.
 
 ## What's in it
 
