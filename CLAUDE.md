@@ -51,6 +51,7 @@ Keep publishing to that same URL. Review progress is stored in that artifact's p
 - The day starts at 4am.
 - The new-card limit per day is shared across all filters.
 - Tries per card (default 2): a wrong click shows "Try again" and shades the wrong pick. A right answer on a later try defaults to Hard. Running out of tries, or pressing "I don't know", counts as Again.
+- Territory of the right country: clicking a territory of the country asked for (French Guiana when it's France) isn't a miss. It says "That's French Guiana, which belongs to France. Try the mainland." and gives another go. The territory's name is exposed as usual.
 - Neighbor nudge: a country clicked by mistake has its review pulled to within a day. This applies to regular reviews only.
 
 ### Exposure rule

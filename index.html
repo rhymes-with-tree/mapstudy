@@ -891,6 +891,15 @@ function onMapClick(sx, sy){
   const hit = resolveClick(hitTest(sx, sy));
   { const Wk = W0*view.k; lastClick = [((sx - view.x) % Wk + Wk) % Wk / view.k, (sy - view.y)/view.k]; }
   if (hit === current){ answerRight(); return; }
+  // A territory of the country asked for (French Guiana when it's France) isn't a miss: say whose it is and let them go again
+  if (hit && DEPS[hit] && DEPS[hit][1] === current){
+    expose(hit);
+    sheet.innerHTML = `<div class="retry"><div class="verdict" style="color:var(--muted)">Close</div>That's <b>${esc(DEPS[hit][0])}</b>, which belongs to ${esc(NAMES[current])}. Try the mainland.</div>
+    <div class="row"><span></span><button class="btn" id="giveUp">I don't know</button></div>`;
+    sheet.hidden = false; askbar.hidden = true;
+    document.getElementById("giveUp").onclick = () => { if (mode === "asking") answerWrong(null, true); };
+    return;
+  }
   misses++;
   if (hit && NAMES[hit] && hit !== current){ noteConfusion(current, hit); if (!wrongPicks.includes(hit)) wrongPicks.push(hit); }
   if (misses >= (state.settings.tries || 1)){ answerWrong(hit, false); return; }
