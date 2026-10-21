@@ -8,7 +8,7 @@
 :root{
   --bg:#eaf1f2; --ocean:#cfe2e6; --land:#f3eee8; --land-hover:#e4d9cc; --border:#a99b8e;
   --ink:#1d2a2e; --muted:#566a6f; --panel:#ffffff; --line:#d2dee0; --shadow:0 6px 24px rgba(29,42,46,.14);
-  --accent:#BD5538; --accent-ink:#ffffff; --islet:#6e5d4f; --land-dim:#dbe6e7; --border-dim:#b8cbce; --islet-dim:#9fb6ba;
+  --accent:#BD5538; --accent-ink:#ffffff; --islet:#6e5d4f; --land-dim:#dbe6e7; --border-dim:#b8cbce; --islet-dim:#9fb6ba; --stripe:rgba(29,42,46,.38);
   --target:#ECA818; --wrong:#E16A4A; --right:#6AA673;
   --new:#3f7d86; --learn:#a33a77; --due:#3f8550;
   --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
@@ -18,13 +18,13 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#10191c; --ocean:#15262b; --land:#3a4447; --land-hover:#4b585b; --border:#76848a;
   --ink:#e7eef0; --muted:#9db0b4; --panel:#1a272b; --line:#2c3c41; --shadow:0 6px 24px rgba(0,0,0,.45);
-  --accent:#E16A4A; --accent-ink:#1a1210; --islet:#b8c6ca; --land-dim:#1d2e33; --border-dim:#30444a; --islet-dim:#3d5359;
+  --accent:#E16A4A; --accent-ink:#1a1210; --islet:#b8c6ca; --land-dim:#1d2e33; --border-dim:#30444a; --islet-dim:#3d5359; --stripe:rgba(231,238,240,.34);
   --target:#ECA818; --wrong:#E16A4A; --right:#7dbb86;
   --new:#8cc1c8; --learn:#d77bb0; --due:#8fcf98; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#10191c; --ocean:#15262b; --land:#3a4447; --land-hover:#4b585b; --border:#76848a;
   --ink:#e7eef0; --muted:#9db0b4; --panel:#1a272b; --line:#2c3c41; --shadow:0 6px 24px rgba(0,0,0,.45);
-  --accent:#E16A4A; --accent-ink:#1a1210; --islet:#b8c6ca; --land-dim:#1d2e33; --border-dim:#30444a; --islet-dim:#3d5359;
+  --accent:#E16A4A; --accent-ink:#1a1210; --islet:#b8c6ca; --land-dim:#1d2e33; --border-dim:#30444a; --islet-dim:#3d5359; --stripe:rgba(231,238,240,.34);
   --target:#ECA818; --wrong:#E16A4A; --right:#7dbb86;
   --new:#8cc1c8; --learn:#d77bb0; --due:#8fcf98; color-scheme:dark}
 html,body{height:100%}
@@ -54,6 +54,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:cro
 .retry{font-size:15px;line-height:1.45}
 .retry b{font-family:var(--f-body);letter-spacing:.04em}
 .find .hint{color:var(--muted);font-size:13px;margin-top:4px}
+.key{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:12px;display:flex;align-items:center;gap:6px;font:700 12px/1 var(--f-body);color:var(--ink);background:var(--panel);box-shadow:var(--shadow);border-radius:999px;padding:4px 10px 4px 5px;pointer-events:none}
+.key i{width:18px;height:13px;border-radius:4px;border:1.5px dashed var(--border);background:repeating-linear-gradient(135deg,var(--land) 0 3px,var(--stripe) 3px 4.6px)}
 .zoom{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:12px;display:flex;flex-direction:column;gap:6px}
 .zoom .btn{width:38px;height:38px;padding:0;background:var(--panel);box-shadow:var(--shadow);font-size:18px;line-height:1}
 .zoom .btn.ocean{font-size:11px;letter-spacing:.06em}
@@ -163,6 +165,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   <div class="map" id="map">
     <canvas id="cv" aria-label="World map. Click the country named in the prompt."></canvas>
     <div class="loading" id="loading">Loading map…</div>
+    <div class="key" aria-hidden="true"><i></i>Disputed</div>
 
     <div class="find" id="find" hidden>
       <div class="lbl"><span>Find</span><span class="chip" id="cardChip">new</span><span class="grip" aria-hidden="true" title="Drag to move this card">⠿</span></div>
@@ -251,7 +254,7 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
       <div class="field">
         <div class="lab">Limit to</div>
         <div class="check"><input type="checkbox" id="fSmall"><label for="fSmall">Small nations only <span class="status">(your list of 63)</span></label></div>
-        <div class="check"><input type="checkbox" id="fUN"><label for="fUN">UN members only <span class="status">(leaves out Vatican City, Palestine, Taiwan, Kosovo, Western Sahara, Cook Islands, Niue)</span></label></div>
+        <div class="check"><input type="checkbox" id="fUN"><label for="fUN">UN members only <span class="status">(leaves out the 45 territories, such as Greenland and Puerto Rico, and Vatican City, Palestine, Taiwan, Kosovo, Western Sahara, Cook Islands, Niue)</span></label></div>
       </div>
       <div class="field">
         <div class="row"><div class="lab">Regions</div><button class="btn link" id="clearGeo">Clear regions</button></div>
@@ -284,10 +287,10 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
       <div class="tablewrap"><table><thead><tr><th>Country</th><th>Standing</th><th>Last</th><th>Next</th><th>Misses</th></tr></thead><tbody id="progBody"></tbody></table></div>
       <div class="field">
         <div class="lab">Start over</div>
-        <p>Sets all 200 countries back to new and clears your mix-up list. Settings stay.</p>
+        <p>Sets all 245 countries and territories back to new and clears your mix-up list. Settings stay.</p>
         <div><button class="btn danger" id="resetAsk">Erase all progress…</button></div>
         <div class="confirm" id="resetConfirm" hidden>
-          <p><b>Erase progress for all 200 countries?</b><br>This can't be undone.</p>
+          <p><b>Erase progress for all 245 countries and territories?</b><br>This can't be undone.</p>
           <div class="row"><button class="btn" id="resetNo">Cancel</button><button class="btn dangerfill" id="resetYes">Erase everything</button></div>
         </div>
       </div>
@@ -300,7 +303,8 @@ td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
 (() => {
 "use strict";
 /* ---------- Countries ---------- */
-// Display names for the 200 quizzable entries: 193 UN members, Vatican City, Palestine, Taiwan, Kosovo, Western Sahara, Cook Islands, Niue.
+// Display names for the 200 countries: 193 UN members, Vatican City, Palestine, Taiwan, Kosovo, Western Sahara, Cook Islands, Niue.
+// The 45 territories (DEPS, below) are added to it, for 245 quizzable places.
 const NAMES = {
 DZA:"Algeria",AGO:"Angola",BEN:"Benin",BWA:"Botswana",BFA:"Burkina Faso",BDI:"Burundi",CPV:"Cape Verde",CMR:"Cameroon",CAF:"Central African Republic",TCD:"Chad",COM:"Comoros",COG:"Republic of the Congo",COD:"DR Congo",CIV:"Ivory Coast",DJI:"Djibouti",EGY:"Egypt",GNQ:"Equatorial Guinea",ERI:"Eritrea",SWZ:"Eswatini",ETH:"Ethiopia",GAB:"Gabon",GMB:"Gambia",GHA:"Ghana",GIN:"Guinea",GNB:"Guinea-Bissau",KEN:"Kenya",LSO:"Lesotho",LBR:"Liberia",LBY:"Libya",MDG:"Madagascar",MWI:"Malawi",MLI:"Mali",MRT:"Mauritania",MUS:"Mauritius",MAR:"Morocco",MOZ:"Mozambique",NAM:"Namibia",NER:"Niger",NGA:"Nigeria",RWA:"Rwanda",STP:"São Tomé and Príncipe",SEN:"Senegal",SYC:"Seychelles",SLE:"Sierra Leone",SOM:"Somalia",ZAF:"South Africa",SDS:"South Sudan",SDN:"Sudan",TZA:"Tanzania",TGO:"Togo",TUN:"Tunisia",UGA:"Uganda",ZMB:"Zambia",ZWE:"Zimbabwe",SAH:"Western Sahara",
 ATG:"Antigua and Barbuda",ARG:"Argentina",BHS:"Bahamas",BRB:"Barbados",BLZ:"Belize",BOL:"Bolivia",BRA:"Brazil",CAN:"Canada",CHL:"Chile",COL:"Colombia",CRI:"Costa Rica",CUB:"Cuba",DMA:"Dominica",DOM:"Dominican Republic",ECU:"Ecuador",SLV:"El Salvador",GRD:"Grenada",GTM:"Guatemala",GUY:"Guyana",HTI:"Haiti",HND:"Honduras",JAM:"Jamaica",MEX:"Mexico",NIC:"Nicaragua",PAN:"Panama",PRY:"Paraguay",PER:"Peru",KNA:"Saint Kitts and Nevis",LCA:"Saint Lucia",VCT:"Saint Vincent and the Grenadines",SUR:"Suriname",TTO:"Trinidad and Tobago",USA:"United States",URY:"Uruguay",VEN:"Venezuela",
@@ -309,13 +313,27 @@ ALB:"Albania",AND:"Andorra",AUT:"Austria",BLR:"Belarus",BEL:"Belgium",BIH:"Bosni
 AUS:"Australia",FJI:"Fiji",KIR:"Kiribati",MHL:"Marshall Islands",FSM:"Micronesia",NRU:"Nauru",NZL:"New Zealand",PLW:"Palau",PNG:"Papua New Guinea",WSM:"Samoa",SLB:"Solomon Islands",TON:"Tonga",TUV:"Tuvalu",VUT:"Vanuatu",COK:"Cook Islands",NIU:"Niue"};
 const MINE = "ATG BHS BRB DMA GRD KNA LCA VCT TTO BLZ GUY SUR SAH CPV GMB GNB GNQ GAB STP COM DJI MUS SYC BWA SWZ LSO BHR PSX QAT BTN MDV BRN SGP TLS TWN AND CYP EST ISL KOS LVA LIE LUX MLT MCO MNE MKD SMR SVN VAT FJI SLB VUT KIR MHL FSM NRU PLW COK NIU WSM TON TUV".split(" ");
 // Map pieces that count as part of a quiz country when clicked.
+// Territories: every place with an ISO country code of its own (Greenland, Puerto Rico, French Guiana...), shown
+// with the country it belongs to. The Chagos Islands go with Mauritius, as the UN General Assembly voted in 2019.
+const DEPS = {GRL:["Greenland","DNK"],GUF:["French Guiana","FRA"],SJM:["Svalbard","NOR"],NCL:["New Caledonia","FRA"],FLK:["Falkland Islands","GBR"],
+PRI:["Puerto Rico","USA"],ATF:["French Southern and Antarctic Lands","FRA"],SGS:["South Georgia and the South Sandwich Islands","GBR"],
+PYF:["French Polynesia","FRA"],REU:["Réunion","FRA"],GLP:["Guadeloupe","FRA"],MTQ:["Martinique","FRA"],FRO:["Faroe Islands","DNK"],
+HKG:["Hong Kong","CHN"],IMN:["Isle of Man","GBR"],GUM:["Guam","USA"],CUW:["Curaçao","NLD"],HMD:["Heard Island and McDonald Islands","AUS"],
+MYT:["Mayotte","FRA"],MNP:["Northern Mariana Islands","USA"],TCA:["Turks and Caicos Islands","GBR"],VIR:["U.S. Virgin Islands","USA"],
+CYM:["Cayman Islands","GBR"],BES:["Bonaire, Sint Eustatius and Saba","NLD"],SPM:["Saint Pierre and Miquelon","FRA"],
+SHN:["Saint Helena, Ascension and Tristan da Cunha","GBR"],ABW:["Aruba","NLD"],IOA:["Christmas and Cocos (Keeling) Islands","AUS"],
+VGB:["British Virgin Islands","GBR"],IOT:["Chagos Islands","MUS"],WLF:["Wallis and Futuna","FRA"],JEY:["Jersey","GBR"],ASM:["American Samoa","USA"],
+AIA:["Anguilla","GBR"],MSR:["Montserrat","GBR"],BMU:["Bermuda","GBR"],MAF:["Saint Martin","FRA"],GGY:["Guernsey","GBR"],SXM:["Sint Maarten","NLD"],
+NFK:["Norfolk Island","AUS"],PCN:["Pitcairn Islands","GBR"],BLM:["Saint Barthélemy","FRA"],MAC:["Macao","CHN"],TKL:["Tokelau","NZL"],
+ATC:["Ashmore and Cartier Islands","AUS"]};
+for (const c in DEPS) NAMES[c] = `${DEPS[c][0]} (${NAMES[DEPS[c][1]]})`;
 const ALIAS = {CYN:"CYP", SOL:"SOM", ALD:"FIN"};
 const REGION_FIX = {CYP:"Europe", TUR:"Asia", RUS:"Europe"};
 // UN subregions put Mexico in Central America and call the US/Canada group "Northern America"; use the everyday grouping instead
 const SUB_FIX = {CYP:"Southern Europe", MEX:"North America"};
 const SUB_RENAME = {"Northern America":"North America"};
-const NON_UN = new Set(["VAT","PSX","TWN","KOS","SAH","COK","NIU"]);
-const CONTINENTS = ["Africa","Americas","Asia","Europe","Oceania"];
+const NON_UN = new Set(["VAT","PSX","TWN","KOS","SAH","COK","NIU", ...Object.keys(DEPS)]);
+const CONTINENTS = ["Africa","Americas","Asia","Europe","Oceania","Southern Ocean"]; // the Southern Ocean holds two remote island territories
 const MICRO_TOL = 10; // px around a tiny microstate that triggers the zoom-to-choose step
 const MICRO = 3; // map units (about 1 degree): Luxembourg and anything smaller
 const KMAX = 4000; // deep enough to see Vatican City and Monaco as outlines
@@ -458,20 +476,20 @@ function nextDueIn(){
 const mapEl = document.getElementById("map"), cv = document.getElementById("cv"), ctx = cv.getContext("2d");
 const hitCtx = document.createElement("canvas").getContext("2d");
 const W0 = 1000; let H0 = 520;
-let feats = [], featByCode = {}, ready = false;
+let feats = [], featByCode = {}, ready = false, disputed = null; // disputed: Path2D of the striped areas
 let cw = 0, ch = 0, dpr = 1;
 const view = {k:1, x:0, y:0};
 let kHome = 1, colors = {};
 let hover = null, marks = {}; // marks: code -> color token name
 let ring = null; // {code, color}
 
-function readColors(){ const cs = getComputedStyle(document.documentElement); for (const n of ["ocean","land","land-hover","border","target","wrong","right","ink","islet","land-dim","border-dim","islet-dim"]) colors[n] = cs.getPropertyValue("--"+n).trim(); }
+function readColors(){ const cs = getComputedStyle(document.documentElement); for (const n of ["ocean","land","land-hover","border","target","wrong","right","ink","islet","land-dim","border-dim","islet-dim","stripe"]) colors[n] = cs.getPropertyValue("--"+n).trim(); }
 readColors();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readColors(); draw(); });
 new MutationObserver(() => { readColors(); draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
 
 async function loadMap(){
-  const res = await fetch("world.json"); const raw = await res.json();
+  const [raw, disp] = await Promise.all(["world.json", "disputed.json"].map(f => fetch(f).then(r => r.json())));
   const proj = d3.geoNaturalEarth1().fitWidth(W0, {type:"Sphere"}); gProj = proj;
   const gp = d3.geoPath(proj);
   H0 = gp.bounds({type:"Sphere"})[1][1];
@@ -507,6 +525,7 @@ async function loadMap(){
     f.groups = [...groups.values()].map(gr => ({region: gr.region, sub: gr.sub, boxes: gr.boxes, path: new Path2D(gr.d.join("")), islets: gr.isl.length ? new Path2D(gr.isl.join("")) : null}));
     f.hasIslets = f.groups.some(gr => gr.islets); delete f.parts;
   }
+  disputed = new Path2D(disp.map(([, , polys]) => gp({type:"MultiPolygon", coordinates: polys})).join(""));
   feats.sort((a, b) => b.size - a.size); // big drawn first; enclaves and islands sit on top and win clicks
   document.getElementById("loading").hidden = true;
   ready = true;
@@ -644,6 +663,12 @@ function draw(){
         ctx.fillStyle = m ? colors[m] : dim ? colors["land-dim"] : (hover === f.code ? colors["land-hover"] : colors.land); ctx.fill(gr.path);
       }
     }
+    // Disputed land (see tools/disputed.py for which): stripes over whatever colour is under it, and a dashed edge
+    ctx.save(); ctx.clip(disputed);
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.beginPath();
+    for (let d = -ch; d < cw; d += 7){ ctx.moveTo(d, ch); ctx.lineTo(d + ch, 0); }
+    ctx.lineWidth = 1.5; ctx.strokeStyle = colors.stripe; ctx.stroke(); ctx.restore();
+    ctx.setLineDash([4/k, 3/k]); ctx.lineWidth = 1.1/k; ctx.strokeStyle = colors.border; ctx.stroke(disputed); ctx.setLineDash([]);
     // after an answer, circle the correct country so even a speck-sized one is easy to spot
     if (arrow && featByCode[arrow.to]){
       ctx.setTransform(dpr,0,0,dpr,0,0);
