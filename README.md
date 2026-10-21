@@ -2,7 +2,7 @@
 
 A click-the-country world map quiz with Anki-style spaced repetition. A country's name appears; click it on the map. Countries you know come back less often, and ones you miss come back sooner.
 
-Play it at https://claude.ai/artifact/Po6m9MbbpMrpjwaSNNpKoQ. Your review progress is saved to your account there.
+Play it at https://claude.ai/artifact/Po6m9MbbpMrpjwaSNNpKoQ, where your review progress is saved to your Claude account, or at https://rhymes-with-tree.github.io/mapstudy/, where it's saved in your browser.
 
 ## What's in it
 
@@ -30,6 +30,8 @@ Play it at https://claude.ai/artifact/Po6m9MbbpMrpjwaSNNpKoQ. Your review progre
 | `tools/prep_world.py` | Builds `world.json` from Natural Earth |
 | `tools/un_borders.py` | Redraws disputed borders the UN's way and splits out territories |
 | `tools/disputed.py` | Builds `disputed.json` |
+| `tools/build_site.py` | Builds the web version into `docs/` for GitHub Pages |
+| `docs/` | The web version: built, not edited by hand |
 
 ## Running it yourself
 
@@ -40,6 +42,14 @@ python3 -m http.server 8000
 ```
 
 Opened outside claude.ai, progress is saved in that browser only.
+
+## The web version
+
+GitHub Pages serves `docs/` from the `main` branch (Settings → Pages → Deploy from a branch → `main`, `/docs`). After changing `index.html`, `world.json` or `disputed.json`, rebuild it:
+
+```
+python3 tools/build_site.py
+```
 
 ## Rebuilding the map data
 
