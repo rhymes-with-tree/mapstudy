@@ -2,10 +2,9 @@
 
 Click-the-country world map quiz with Anki-style spaced repetition. Built for Stellyn.
 
-Published as a claude.ai artifact: https://claude.ai/artifact/Po6m9MbbpMrpjwaSNNpKoQ
-Keep publishing to that same URL. Review progress is stored in that artifact's per-user database (`data/users/<id>/srs`, capabilities `db` + `user`), so a new artifact would start from zero.
+The web version on GitHub Pages is the one that matters: https://rhymes-with-tree.github.io/mapstudy/, served from `docs/` on `main` (progress in the browser). `index.html` is written in the artifact's format (no doctype or head), so `tools/build_site.py` wraps it into `docs/index.html` and copies the map data. Run it after every change to `index.html`, `world.json` or `disputed.json`, and commit `docs/` with the change.
 
-Also on GitHub Pages, from `docs/` on `main`: https://rhymes-with-tree.github.io/mapstudy/ (progress in the browser only). `index.html` is written for the artifact (no doctype or head), so `tools/build_site.py` wraps it into `docs/index.html` and copies the map data. Run it after every change to `index.html`, `world.json` or `disputed.json`, and commit `docs/` with the change.
+The claude.ai artifact (https://claude.ai/artifact/Po6m9MbbpMrpjwaSNNpKoQ) is only a working preview for building the web version. If it's republished, use that same URL; its progress is in the artifact's per-user database (`data/users/<id>/srs`, capabilities `db` + `user`).
 
 ## Files
 
