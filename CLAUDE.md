@@ -5,6 +5,8 @@ Click-the-country world map quiz with Anki-style spaced repetition. Built for St
 Published as a claude.ai artifact: https://claude.ai/artifact/Po6m9MbbpMrpjwaSNNpKoQ
 Keep publishing to that same URL. Review progress is stored in that artifact's per-user database (`data/users/<id>/srs`, capabilities `db` + `user`), so a new artifact would start from zero.
 
+Also on GitHub Pages, from `docs/` on `main`: https://rhymes-with-tree.github.io/mapstudy/ (progress in the browser only). `index.html` is written for the artifact (no doctype or head), so `tools/build_site.py` wraps it into `docs/index.html` and copies the map data. Run it after every change to `index.html`, `world.json` or `disputed.json`, and commit `docs/` with the change.
+
 ## Files
 
 | File | What it is |
@@ -15,6 +17,8 @@ Keep publishing to that same URL. Review progress is stored in that artifact's p
 | `tools/prep_world.py` | Builds `world.json` from Natural Earth `ne_50m_admin_0_countries.geojson` (github.com/nvkelso/natural-earth-vector). Run: `python3 tools/prep_world.py <geojson> world.json` |
 | `tools/un_borders.py` | Run once after `prep_world.py`: redraws disputed land the UN's way and splits out territories drawn inside their country. Needs shapely and Natural Earth's `ne_50m_admin_0_breakaway_disputed_areas.geojson`. Run: `python3 tools/un_borders.py world.json <disputed geojson> world.json` |
 | `tools/disputed.py` | Builds `disputed.json` from the same disputed-areas file. Run: `python3 tools/disputed.py <disputed geojson> world.json disputed.json` |
+| `tools/build_site.py` | Builds the GitHub Pages version into `docs/`. Run: `python3 tools/build_site.py` |
+| `docs/` | The GitHub Pages version. Built, never edited by hand. |
 
 ### world.json build rules
 
