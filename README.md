@@ -41,7 +41,7 @@ Serve the folder with any static web server and open `index.html`, for example:
 python3 -m http.server 8000
 ```
 
-Opened outside claude.ai, progress is saved in that browser only.
+Progress is saved in that browser.
 
 ## The web version
 

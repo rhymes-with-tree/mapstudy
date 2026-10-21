@@ -1,7 +1,6 @@
 # Builds the web version of World Map Recall into docs/, for GitHub Pages.
-# index.html is written for the claude.ai artifact, which wraps it in a page of its own (doctype, charset, viewport and
-# a few base styles); this adds the same wrapping, and copies the map data next to it. Off claude.ai there's no account
-# to save to, so progress stays in each person's browser.
+# index.html has no page of its own around it (doctype, charset, viewport and a few base styles); this adds one, and
+# copies the map data next to it. Progress stays in each person's browser.
 # Run from the repo root after changing index.html, world.json or disputed.json: python3 tools/build_site.py
 import os, shutil
 HEAD = """<!doctype html>
